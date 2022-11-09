@@ -9,7 +9,7 @@ const user = mongoose.Schema({
         type:String,
         require:true
     },
-    passport : {
+    password : {
         type:String,
         require:true
     },

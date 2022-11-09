@@ -1,0 +1,33 @@
+//-------------------------index.js------------------------//
+index file me humlog sabse pahle express ko import karte hain.
+uske baad humlog express ek instance bnate hain.baad
+uske baad connection databse connections ko bnate hain ya import kartehain other file se-
+uske baad humlog route ko bhi import karte hain.
+uske baad ek middleware (app.use('/api', user_routes) ) banate hain ki wo route pe le ja sake-
+uske baad humlog local server bhi bnate hain.output ke liye-
+
+
+
+//---------------------routes folder--------------------//
+esme humlog bht saare alag alag file bnate hain alag alag route ke liye-
+index file se hmara code yain pe aata hai. or jis route bheja jata hai wahi pe 
+jaake work ko complete karta hai apna-
+
+
+
+//-----------------Controller folder------------------//
+esme humlog bht saare alag alag file bnate hain alag alag controller ke liye-
+route file ke parameter me controller ka function diya jata hai or usi hisan se route 
+contoller ke function ko call karta hai. 
+
+
+
+//-------------------models-------------------------//
+models ke ander humlog bht saare files bnate hain or alag alag databse Schema bnate hain. 
+or schema bnake usko export kar dete hain fhr usko humlog satabse me use kar lete hain. 
+
+
+//------------------Config folder-------------------//
+esme humlog bht saare file bnayenge alag alag configuration ke liye.
+jaise ki JWT ka configuration ke liye. 
+
