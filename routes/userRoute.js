@@ -26,13 +26,27 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({storage: storage});
-//end multer code........
+//end multer code----------------------------------------------
+
+const auth = require("../middlewares/auth"); 
 
 const user_controller = require("../controllers/userController.js");
 
 user_route.post("/register", upload.single('image'),user_controller.register_user);  // route for register api
 
 user_route.post("/login", user_controller.user_login);  // route for login api
+
+/*
+jwt authentication ko test karne ke liye api bnaya hai.
+eslea eska function controller ke bjaye yahin pe bna diya hai.
+kyunki esko sirf testing ke liye bna rhe hain.
+*/
+user_route.get("/testAuth", auth, function(req,res) {
+    res.send({success:true, msg:"Authentication successfully"})
+});
+
+
+
 
 module.exports = user_route;
 

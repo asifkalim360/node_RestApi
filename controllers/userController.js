@@ -1,6 +1,6 @@
 const User = require("../models/userModel.js");
 const bcryptjs = require("bcryptjs");
-const config = require("../config/config");
+const config = require("../config/config.js");
 const jwt = require("jsonwebtoken");
 //Making a function for generate jwt token..........
 const create_token = async(id) => {
@@ -13,7 +13,6 @@ const create_token = async(id) => {
         res.status(400).send(error.message)
     }
 }
-
 //----------------------------------------------------
 // making securePassword() funciton......
 const securePassword = async (password) => {
@@ -69,7 +68,7 @@ const user_login = async(req, res) => {
        if(userData){
             const passwordMatch = await bcryptjs.compare(password, userData.password);
             if(passwordMatch){
-                //jason web token.......
+                // json web token.......
                 const tokenData = await create_token(userData._id);
                 const userResult ={
                     _id:userData._id,
@@ -93,7 +92,7 @@ const user_login = async(req, res) => {
             }
         }
        else{
-            res.status(200).send({success:false, msg:"Login details are incorrect"})
+            res.status(200).send({success:false, msg:"Login details are incorrect"});
        }
 
     } catch (error) {
