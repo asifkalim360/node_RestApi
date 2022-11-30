@@ -38,7 +38,7 @@ const register_user = async(req, res) => {
             image : req.file.filename,      //using multer
             type : req.body.type,
 
-        })
+        });
 
         const userData = await User.findOne({email : req.body.email});
         if(userData)
@@ -78,7 +78,7 @@ const user_login = async(req, res) => {
                     image:userData.image,
                     mobile:userData.mobile,
                     type:userData.type,
-                    token:tokenData,
+                    token:tokenData,              
                 }
                 const response = {
                     success:true,
@@ -92,17 +92,45 @@ const user_login = async(req, res) => {
             }
         }
        else{
-            res.status(200).send({success:false, msg:"Login details are incorrect"});
+            res.status(200).send({success:false, msg:"Login details are incorrect!!!"});
        }
 
     } catch (error) {
         res.status(400).send(error.message);
     }
 }
- 
 //start user login api method-----
 //---------------------------------------------------------------------------------------------
+
+//Start Update Password method------ 
+const update_password = async(req,res) => {
+    try {
+        const user_id = req.body.user_id;
+        const password = req.body.password;
+
+        const data = await User.findOne({_id:user_id});
+        if(data)
+        {
+            const newPassword = await securePassword(password);
+            const userData = await User.findByIdAndUpdate({_id:user_id}, {$set: {
+                password:newPassword
+            }});
+            res.status(200).send({success:true, msg:"Your Password has been Updated!"})
+        }
+        else 
+        {
+            res.status(200).send({success:false, msg:"User Id Not Found!"});
+        }
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+}
+
+
+//End Update Password method------
+//----------------------------------------------------------------------------------------------
 module.exports = {
     register_user,
     user_login,
+    update_password,
 }
