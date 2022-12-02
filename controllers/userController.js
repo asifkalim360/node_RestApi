@@ -1,7 +1,46 @@
 const User = require("../models/userModel.js");
-const bcryptjs = require("bcryptjs");
-const config = require("../config/config.js");
-const jwt = require("jsonwebtoken");
+const bcryptjs = require("bcryptjs");           //using for code hashing
+const config = require("../config/config.js");  //using for secret jwt token key.
+const jwt = require("jsonwebtoken");            //using for jwt token.
+const nodemailer = require("nodemailer");       //using for smtp mailing 
+const randomstring = require("randomstring");   //using for generating ramdom strings.
+
+
+//Making a function for generate email token and reset password..........
+const sendResetPasswordMail = async(name, email, token) => {
+    try {
+        const tranporter = nodemailer.createTransport({
+            host:'smtp.gmail.com',
+            port:587,
+            secure:false,
+            requireTLS:true,
+            auth:{
+                user:config.emailUser,
+                pass:config.emailPassword
+            }
+        });
+ 
+        const mailOptions = {
+            from : config.emailUser,
+            to:email,
+            subject:'For reset Password',
+            html:'<p>Hi ' +name+ ', Please copy the link end <a href="http://127.0.0.1:3000/api/reset-password?token='+token+'"></a></p>'
+        }
+        tranporter.sendMail(mailOptions, function(error,info) {
+            if(error)
+            {
+                console.log(error)
+            } 
+            else 
+            {
+                console.log("Mail has been Sent :- ", info.response)
+            }
+        });
+    } catch (error) {
+        res.status(400).send({success:false, msg:error.message});
+    }
+}
+
 //Making a function for generate jwt token..........
 const create_token = async(id) => {
     try {
@@ -108,29 +147,63 @@ const update_password = async(req,res) => {
         const user_id = req.body.user_id;
         const password = req.body.password;
 
-        const data = await User.findOne({_id:user_id});
-        if(data)
+        if(user_id=='')
         {
-            const newPassword = await securePassword(password);
-            const userData = await User.findByIdAndUpdate({_id:user_id}, {$set: {
-                password:newPassword
-            }});
-            res.status(200).send({success:true, msg:"Your Password has been Updated!"})
+            res.status(200).send({success:false, msg:"please Enter your user id's"});
         }
         else 
         {
-            res.status(200).send({success:false, msg:"User Id Not Found!"});
+            const data = await User.findOne({_id:user_id});
+            if(data)
+            {
+                const newPassword = await securePassword(password);
+                const userData = await User.findByIdAndUpdate({_id:user_id}, {$set: {
+                    password:newPassword
+                }});
+                res.status(200).send({success:true, msg:"Your Password has  been Updated!"})
+            }
+            else 
+            {
+                res.status(200).send({success:false, msg:"User Id Not Found!"});
+            }
         }
     } catch (error) {
         res.status(400).send(error.message);
     }
 }
 
+//End Update Password method------
+//----------------------------------------------------------------------------------------------
+
+//Start Update Password method------ 
+const forget_password = async(req,res) => {
+    try {
+        const email = req.body.email;
+        const userData = await User.findOne({email:email});
+        if(userData)
+        {
+            
+            const randomString = randomstring.generate();
+            const data = await User.updateOne({email:email}, {$set: {token:randomString}});
+            sendResetPasswordMail(userData.name, userData.email, randomString);
+            res.status(200).send({success:true, msg:"Please check your Email and reset your password !!!"});      
+        }
+        else 
+        {
+            res.status(200).send({success:true, msg:"This Email does not exists!!!"});   
+        }
+    } catch (error) {
+        res.status(400).send({success:false, msg:error.message});
+    }
+}
 
 //End Update Password method------
 //----------------------------------------------------------------------------------------------
+
+
 module.exports = {
     register_user,
     user_login,
     update_password,
+    forget_password,
 }

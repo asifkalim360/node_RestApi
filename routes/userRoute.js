@@ -48,9 +48,11 @@ user_route.get("/testAuth", auth, function(req,res) {
     res.send({success:true, msg:"Authentication successfully"})
 });
 
-// route for update-password api
+// route for update-password Api---
 user_route.post('/update-password', auth, user_controller.update_password);
 
+//route for forget-password Api---
+user_route.post('/forget-password', user_controller.forget_password);
 
 module.exports = user_route;
 
